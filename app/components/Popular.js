@@ -1,5 +1,6 @@
 const React = require('react');
 var PropTypes = require('prop-types');
+var api = require('../utils/api')
 
 function SelectedLanguage (props) {
   var languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python'];
@@ -19,6 +20,36 @@ function SelectedLanguage (props) {
   )
 }
 
+
+function ReposGrid (props){
+  return (
+    <ul className='popular-list'>
+      {props.repos.map(function(repo, index) {
+        return(
+          <li key={repo.name} className='popular-items'>
+            <div className='popular-rank'>#{index + 1}</div>
+            <ul className='spae-list-items'>
+              <li>
+                <img
+                  className="avatar"
+                  src={repo.owner.avatar_url}
+                  alt={'avatar for' + repo.owner.login} />
+              </li>
+              <li><a href={repo.html_url}>{repo.name}</a></li>
+              <li>{repo.owner.login}</li>
+              <li>{repo.stargazers_count} stars</li>
+            </ul>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+ReposGrid.propTypes = {
+  repos: PropTypes.array.isRequired
+}
+
 SelectedLanguage.propTypes = {
   selectedLanguage: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired
@@ -28,9 +59,13 @@ class Popular extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      selectedLanguage: 'All'
+      selectedLanguage: 'All',
+      repos: null
     }
     this.updateLanguage = this.updateLanguage.bind(this)
+  }
+  componentDidMount() {
+    this.updateLanguage(this.state.selectedLanguage)
   }
   updateLanguage(lang){
     this.setState(function () {
@@ -38,6 +73,16 @@ class Popular extends React.Component {
         selectedLanguage: lang
       }
     });
+
+    api.fetchPopularRepos(lang)
+      .then(function (repos){
+        this.setState(function (){
+          console.log(repos);
+          return {
+            repos: repos
+          }
+        })
+      }.bind(this))
   }
   render(){
     return(
@@ -46,6 +91,9 @@ class Popular extends React.Component {
           selectedLanguage={this.state.selectedLanguage}
           onSelect={this.updateLanguage}
         />
+        {!this.state.repos
+          ? <p>loading</p>
+          : <ReposGrid repos={this.state.repos}/>}
       </div>
     )
   }
