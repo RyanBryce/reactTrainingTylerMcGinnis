@@ -4,7 +4,6 @@ var api = require('../utils/api')
 
 function SelectedLanguage (props) {
   var languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python'];
-  console.log(props);
   return (
     <ul className="languages">
       {languages.map((lang) => {
@@ -77,7 +76,6 @@ class Popular extends React.Component {
     api.fetchPopularRepos(lang)
       .then(function (repos){
         this.setState(function (){
-          console.log(repos);
           return {
             repos: repos
           }
