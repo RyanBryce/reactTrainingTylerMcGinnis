@@ -1,6 +1,8 @@
 var React = require('react');
 var PropTypes = require('prop-types');
 
+//PlayerInput component
+
 class PlayerInput extends React.Component {
   constructor(props) {
     super(props);
@@ -60,6 +62,8 @@ PlayerInput.propTypes = {
 PlayerInput.defaultProps = {
   label: 'Username',
 }
+
+//Battle component
 
 class Battle extends React.Component {
   constructor(props) {
